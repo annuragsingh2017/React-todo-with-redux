@@ -18,9 +18,18 @@ const todoReducers = (state = initialState, action) => {
         todo: data,
       };
     case UPDATE_TASK:
+      const updatedData = state?.todo?.map((data) => {
+        if (data.id === action.payload?.id) {
+          return {
+            ...data,
+            text: action.payload.task,
+          };
+        }
+        return data;
+      });
       return {
         ...state,
-        todo: action.payload,
+        todo: updatedData,
       };
 
     default:

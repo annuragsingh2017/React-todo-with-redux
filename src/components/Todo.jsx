@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addTodos, deleteTodos } from "../Action/actions";
+import { addTodos, deleteTodos, updateTodo } from "../Action/actions";
 
 const Todo = () => {
   const [task, setTask] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
+  const [editedData, setEditedData] = useState("");
+  const [searchData, setSearchData] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
   const dispatch = useDispatch();
   const todos = useSelector((data) => data.todos);
 
@@ -14,9 +18,33 @@ const Todo = () => {
     ];
 
     dispatch(addTodos(allTodosData));
+    setTask("");
   };
   const handleDelete = (id) => {
     dispatch(deleteTodos(id));
+  };
+  const handleEdit = (todo) => {
+    setTask(todo?.text);
+    setIsEdit(true);
+    setEditedData(todo);
+  };
+  const handleUpdate = () => {
+    dispatch(updateTodo(editedData?.id, task));
+    setIsEdit(false);
+  };
+  useEffect(() => {
+    const { todo: todoToBeFiltered } = todos;
+    setFilteredData(
+      todoToBeFiltered.filter((data) => data.text.includes(searchData))
+    );
+  }, [searchData, todos]);
+  const searchHandler = (e) => {
+    setSearchData(e.target.value);
+  };
+  const handleEnter = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
   };
   return (
     <>
@@ -25,13 +53,22 @@ const Todo = () => {
         <input
           placeholder="Add Task"
           value={task}
+          onKeyDown={handleEnter}
           onChange={(e) => setTask(e.target.value)}
         />
-        <button onClick={handleSubmit}>Add</button>
-        {todos?.todo?.map((data) => (
+        <input
+          placeholder="Search..."
+          value={searchData}
+          onChange={searchHandler}
+        />
+        <button onClick={isEdit ? handleUpdate : handleSubmit}>
+          {isEdit ? "update" : "Add"}
+        </button>
+        {filteredData?.map((data) => (
           <div key={data.id}>
             <li>{data.text}</li>
             <button onClick={() => handleDelete(data.id)}>delete</button>
+            <button onClick={() => handleEdit(data)}>Edit</button>
           </div>
         ))}
       </div>
