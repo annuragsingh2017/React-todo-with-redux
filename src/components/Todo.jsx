@@ -33,13 +33,18 @@ const Todo = () => {
     setIsEdit(false);
   };
   useEffect(() => {
-    const { todo: todoToBeFiltered } = todos; // Destructure todo from state
+    const { todo: todoToBeFiltered } = todos;
     setFilteredData(
       todoToBeFiltered.filter((data) => data.text.includes(searchData))
     );
   }, [searchData, todos]);
   const searchHandler = (e) => {
     setSearchData(e.target.value);
+  };
+  const handleEnter = (event) => {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
   };
   return (
     <>
@@ -48,6 +53,7 @@ const Todo = () => {
         <input
           placeholder="Add Task"
           value={task}
+          onKeyDown={handleEnter}
           onChange={(e) => setTask(e.target.value)}
         />
         <input
