@@ -4,19 +4,15 @@ import { addTodos, deleteTodos } from "../Action/actions";
 
 const Todo = () => {
   const [task, setTask] = useState("");
-  const [allTodos, setAllTodos] = useState([]);
   const dispatch = useDispatch();
   const todos = useSelector((data) => data.todos);
 
   const handleSubmit = () => {
     const allTodosData = [
-      ...allTodos,
+      ...todos?.todo,
       { text: task, id: Date.now(), status: "initiate" },
     ];
-    setAllTodos([
-      ...allTodos,
-      { text: task, id: Date.now(), status: "initiate" },
-    ]);
+
     dispatch(addTodos(allTodosData));
   };
   const handleDelete = (id) => {
